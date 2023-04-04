@@ -32,18 +32,32 @@ fun main() {
         performSearch(driver, "2330")
 
         // Wait for a while before closing the browser (to see the result)
-        Thread.sleep(1000)
+        Thread.sleep(500)
 
-        // Navigate to the Quarterly Balance Sheet
-        navigateToQuarterlyBalanceSheet(driver)
+        val stockPrice = driver.findElement(By.cssSelector("div.main_trade_box:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)")).text
+        val companyName = driver.findElement(By.cssSelector(".saudiPage > h3:nth-child(1)")).text
+        val companyIssuedShares = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(2) > strong:nth-child(2)")).text
+        val paidCapital = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(3) > strong:nth-child(2)")).text
 
-        // Get the Balance Sheet table
-        val balanceSheetTable: WebElement = driver.findElement(
-            By.cssSelector(
-                "div.inner_tab_DtlBox:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)"
-            )
-        )
-        println(balanceSheetTable.text)
+        // The Quarterly Balance Sheet
+        val balanceSheetTable = getFinancialStatementTable(driver,"#balancesheet","1")
+        val bST = balanceSheetTable.text
+        // The Quarterly Statement of Income
+        val statementOfIncomeTable = getFinancialStatementTable(driver,"#statementofincome","2")
+        val sOI = statementOfIncomeTable.text
+        // The Quarterly Cash Flow
+        val cashFlowTable = getFinancialStatementTable(driver,"#cashflow","3")
+        val cF = cashFlowTable.text
+
+        println("Stock Price: $stockPrice")
+        println("Company Name: $companyName")
+        println("Company Issued Shares: $companyIssuedShares")
+        println("Paid Capital: $paidCapital")
+
+        println(bST)
+        println(sOI)
+        println(cF)
+
         println("Finished Successfully")
 
     } catch (e: Exception) {
@@ -67,99 +81,30 @@ fun performSearch(driver: WebDriver, searchTerm: String) {
     driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS)
 }
 
-fun navigateToQuarterlyBalanceSheet(driver: WebDriver) {
-
-    // Wait for the page to load
-    WebDriverWait(driver, 30).until(
-        ExpectedConditions.invisibilityOf(
-            driver.findElement(By.cssSelector(".pageLoader"))
-        )
-    )
-
-    // Scroll to an element below the button to avoid the cookies banner
-    val element: WebElement = driver.findElement(By.cssSelector("div.inner_tab_sub:nth-child(1) > div:nth-child(1) > table:nth-child(1) > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(1)"))
-    (driver as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true);", element)
-
+fun getFinancialStatementTable(driver: WebDriver,listName: String,listNumber: String):WebElement {
+    if(listName == "#balancesheet"){
+        // Wait for the page to load
+        WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".pageLoader"))))
+    } else {
+        //Click on the list tab
+        val listTab: WebElement = driver.findElement(By.cssSelector(listName))
+        WebDriverWait(driver,30).until(ExpectedConditions.elementToBeClickable(listTab))
+        listTab.click()
+    }
     // Click on the Quarterly tab
-    val quarterlyTab: WebElement = driver.findElement(
-        By.cssSelector("div.inner_tab_DtlBox:nth-child(1) > div:nth-child(1) > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2)")
-    )
+    val quarterlyTab: WebElement = driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child($listNumber) > div:nth-child(1) > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2)"))
     WebDriverWait(driver, 20).until(ExpectedConditions.elementToBeClickable(quarterlyTab))
     quarterlyTab.click()
+    // Return the Cash Flow table Web Element
+    return driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child($listNumber) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)"))
 }
-
-
-
-
-/*
-fun main() {
-    // Set the system property for the GeckoDriver (Firefox WebDriver)
-    System.setProperty("web-driver.gecko.driver", "./geckodriver")
-   // Initialize the FirefoxDriver to interact with the Tadawul website
-    val driver: WebDriver = FirefoxDriver()
-
-    driver.manage()?.window()?.maximize()
-
-   // Navigate to the Tadawul website
-    driver.get(Constants.BASE_URL)
-
-    WebDriverWait(driver, 20).until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".pageLoader"))))
-
-    val searchIcon: WebElement = driver.findElement(By.cssSelector(".searchtxt")) //.searchtxt > strong:nth-child(2) for arabic so add if statement for eng or ara
-    WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(searchIcon))
-    searchIcon.click()
-
-    val searchBox = driver.findElement(By.cssSelector("#searchQuery"))
-    val searchTerm = "2330"
-    searchBox.sendKeys(searchTerm, Keys.ENTER)
-
-    println("Search term '$searchTerm' entered and search performed Successfully.")
-
-    //-------------
-
-    // Wait for page to load and for pageLoader to disappear
-    WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".breadcrumbs > ul:nth-child(1) > li:nth-child(1) > a:nth-child(1) > span:nth-child(1)"))))
-
-    // Scroll to an element below the button to avoid the cookies banner
-    val element: WebElement = driver.findElement(By.cssSelector(".financials > h3:nth-child(1)"))
-    (driver as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true);", element)
-
-    // Click on the Quarterly tab
-    val quarterlyTab: WebElement = driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child(1) > div:nth-child(1) > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2)"))
-    WebDriverWait(driver, 20).until(ExpectedConditions.elementToBeClickable(quarterlyTab))
-    quarterlyTab.click()
-
-    // Get the Balance Sheet table
-    val balanceSheetTable: WebElement = driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)"))
-    println(balanceSheetTable.text)
-    println("Finished Successfully finally")
-
-    driver.close()
-}
-*/
-
-/*
-// Wait for page to load and for pageLoader to disappear
-    val wait = WebDriverWait(driver, 40)
-    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className(".pageLoader")))
-
-    // Scroll to an element below the button to avoid the cookies banner
-    val element: WebElement = driver.findElement(By.cssSelector(".financials > h3:nth-child(1)"))
-    (driver as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true);", element)
-
-    // Click on the Quarterly tab
-    val quarterlyTab: WebElement = driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child(1) > div:nth-child(1) > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2)"))
-    WebDriverWait(driver, 20).until(ExpectedConditions.elementToBeClickable(quarterlyTab))
-    quarterlyTab.click()
-
-    // Get the Balance Sheet table
-    val balanceSheetTable: WebElement = driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)"))
-    println(balanceSheetTable.text)
-    println("Finished Successfully finally")
-    */
-
 
 //val companySymbols = listOf("1010", "1020", "1030")
+
+// Scroll to an element below the button to avoid the cookies banner
+/*val element: WebElement = driver.findElement(By.cssSelector("div.inner_tab_sub:nth-child(1) > div:nth-child(1) > table:nth-child(1) > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(1)"))
+(driver as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true);", element)*/
+
 
 
 
