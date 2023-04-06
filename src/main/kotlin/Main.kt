@@ -16,7 +16,7 @@ fun main() {
     val driver: WebDriver = FirefoxDriver(firefoxOptions)
 
     //add companies symbols to get their info
-    val companySymbolList = arrayListOf("2330","2120","3020")
+    val companySymbolList = arrayListOf("2330","2120")
 
     try {
         // Navigate to the Tadawul website
@@ -43,25 +43,35 @@ fun main() {
             val companyIssuedShares = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(2) > strong:nth-child(2)")).text
             val paidCapital = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(3) > strong:nth-child(2)")).text
 
-            // The Quarterly Balance Sheet
+            // The Quarterly Balance Sheet WebElement (Still need to be converted to list)
             val balanceSheetTable = getFinancialStatement(driver,"#balancesheet","1")
             // The Quarterly Statement of Income
-            val statementOfIncomeTable = getFinancialStatement(driver,"#statementofincome","2")
+            //val statementOfIncomeTable = getFinancialStatement(driver,"#statementofincome","2")
             // The Quarterly Cash Flow
-            val cashFlowTable = getFinancialStatement(driver,"#cashflow","3")
+            //val cashFlowTable = getFinancialStatement(driver,"#cashflow","3")
 
-            val bST = balanceSheetTable.text
-            val sOI = statementOfIncomeTable.text
-            val cF = cashFlowTable.text
 
             println("Stock Price: $stockPrice")
             println("Company Name: $companyName")
             println("Company Issued Shares: $companyIssuedShares")
             println("Paid Capital: $paidCapital")
 
-            println(bST)
-            println(sOI)
-            println(cF)
+
+            // Extract the data of the webElement Table to list using a tab character as the delimiter (change the delimiter if needed)
+            val extractedBSTable = extractTableData(balanceSheetTable.text)
+            //val extractedSOITable = extractTableData(statementOfIncomeTable.text)
+            //val extractedCFTable = extractTableData(cashFlowTable.text)
+
+            // Print the extracted data
+            for (rowData in extractedBSTable) {
+                println(rowData)
+            }
+            /*for (rowData in extractedSOITable) {
+                println(rowData)
+            }
+            for (rowData in extractedCFTable) {
+                println(rowData)
+            }*/
 
             println(companySymbolList[i]+" Finished Successfully")
 
@@ -108,27 +118,12 @@ fun getFinancialStatement(driver: WebDriver, listName: String, listNumber: Strin
     return driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child($listNumber) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)"))
 }
 
-fun tableData(balanceSheetTable: WebElement): List<List<String>> {
+fun extractTableData(tableText: String, delimiter: String = "\t"): List<List<String>> {
+    val rows = tableText.split("\n")
     val tableData = mutableListOf<List<String>>()
 
-    // Find all the rows in the table
-    val rows = balanceSheetTable.findElements(By.tagName("tr"))
-
-    // Iterate through the rows
     for (row in rows) {
-        val rowData = mutableListOf<String>()
-
-        // Find all the cells (both 'th' and 'td') in the row
-        val headerCells = row.findElements(By.tagName("th"))
-        val dataCells = row.findElements(By.tagName("td"))
-        val allCells = headerCells + dataCells
-
-        // Iterate through the cells and extract the text content
-        for (cell in allCells) {
-            rowData.add(cell.text)
-        }
-
-        // Add the row data to the table data list
+        val rowData = row.split(delimiter)
         tableData.add(rowData)
     }
 
