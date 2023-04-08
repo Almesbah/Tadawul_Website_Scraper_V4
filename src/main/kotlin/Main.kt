@@ -36,13 +36,5 @@ fun main() {
 
 
 
-//val companySymbols = listOf("1010", "1020", "1030")
-//driver.manage()?.window()?.maximize()
-
-// Scroll to an element below the button to avoid the cookies banner
-/*val element: WebElement = driver.findElement(By.cssSelector("div.inner_tab_sub:nth-child(1) > div:nth-child(1) > table:nth-child(1) > thead:nth-child(1) > tr:nth-child(1) > th:nth-child(1)"))
-(driver as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true);", element)*/
-
-
 
 

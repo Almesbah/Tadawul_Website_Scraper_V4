@@ -6,18 +6,15 @@ import java.util.concurrent.TimeUnit
 // The Selenium object contains methods for extracting web data using Selenium.
 object Selenium {
 
-    fun getCompanyData(driver: WebDriver, companySymbolList: String): List<Any> {
-
+    fun getCompanyData(driver: WebDriver, companySymbolList: String): ArrayList<String> {
         // Wait for a while for the header ticker bar to be visible
         Thread.sleep(1000)
-
         // Perform search
         performSearch(driver, companySymbolList)
-
         // Wait for a while before closing the browser (to see the result)
         Thread.sleep(1000)
 
-        //WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector("div.main_trade_box:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)"))))
+        val companyDataList = arrayListOf<String>()
 
         val stockPrice =
             driver.findElement(By.cssSelector("div.main_trade_box:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)")).text
@@ -27,46 +24,31 @@ object Selenium {
         val paidCapital =
             driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(3) > strong:nth-child(2)")).text
 
-        //println("Stock Price: $stockPrice")
-        //println("Company Name: $companyName")
-        //println("Company Issued Shares: $companyIssuedShares")
-        //println("Paid Capital: $paidCapital")
-
-        WebDriverWait(
-            driver,
-            30
-        ).until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".pageLoader"))))
+        companyDataList.add(stockPrice)
+        companyDataList.add(companyName)
+        companyDataList.add(companyIssuedShares)
+        companyDataList.add(paidCapital)
 
         // The Quarterly Balance Sheet WebElement (Still need to be converted to list)
         val balanceSheetTable = getFinancialStatement(driver, "#balancesheet", "1")
-        //println(balanceSheetTable.text)
+        companyDataList.add(balanceSheetTable.text)
 
         // The Quarterly Statement of Income
         val statementOfIncomeTable = getFinancialStatement(driver, "#statementofincome", "2")
-        //println(statementOfIncomeTable.text)
+        companyDataList.add(statementOfIncomeTable.text)
 
         // The Quarterly Cash Flow
         val cashFlowTable = getFinancialStatement(driver, "#cashflow", "3")
-        //println(cashFlowTable.text)
+        companyDataList.add(cashFlowTable.text)
 
         println("$companySymbolList Finished Successfully")
 
         // Scroll to the top of the page to make the header and ticker bar visible
         (driver as JavascriptExecutor).executeScript("window.scrollTo(0, 0);")
 
-        return listOf(
-            stockPrice,
-            companyName,
-            companyIssuedShares,
-            paidCapital,
-            balanceSheetTable,
-            statementOfIncomeTable,
-            cashFlowTable
-        )
-
+        return companyDataList
     }
 }
-
     fun performSearch(driver: WebDriver, searchTerm: String) {
         val searchIcon: WebElement = driver.findElement(By.cssSelector(".searchtxt"))
         WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(searchIcon))
@@ -100,8 +82,12 @@ fun getFinancialStatement(driver: WebDriver, tableName: String, tableNumber: Str
 
     quarterlyTab.click()
 
+    // Wait for the table data to load
+    val tableLocator = By.cssSelector("div.inner_tab_DtlBox:nth-child($tableNumber) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)")
+    WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfNestedElementsLocatedBy(tableLocator, By.tagName("td")))
+
     // Return the Cash Flow table Web Element
-    return driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child($tableNumber) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)"))
+    return driver.findElement(tableLocator)
 }
 
 
