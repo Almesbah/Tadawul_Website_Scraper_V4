@@ -23,8 +23,36 @@ object DataCalculations {
     }
 }
 
-// Function that takes an input string split it and returns a list of strings
 fun extractTableData(input: String): List<String> {
+    // Create a mutable list to store the final output strings
+    val result = mutableListOf<String>()
+
+    // Iterate through each line in the input, split by the newline character
+    input.split("\n").forEach { line ->
+        // Split the line using the regex pattern for hyphens surrounded by whitespace or hyphens at the end of the line
+        val wordsAndHyphens = line.split(Regex("\\s-\\s|\\s-\$"))
+
+        // Iterate through each substring in wordsAndHyphens
+        wordsAndHyphens.forEachIndexed { index, word ->
+            if (index == 0) {
+                // If it's the first substring, add it directly to the result list
+                result.add(word)
+            } else {
+                // For the remaining substrings, add a hyphen and the word to the result list
+                result.add("-")
+                if (word.isNotBlank()) {
+                    result.add(word)
+                }
+            }
+        }
+    }
+
+    // Return the result list after processing all the lines
+    return result
+}
+
+// Function that takes an input string split it and returns a list of strings
+/*fun extractTableData(input: String): List<String> {
     // Split the input string into lines using the newline character
     val lines = input.split("\n")
     // Create a mutable list to store the final output strings
@@ -66,5 +94,5 @@ fun extractTableData(input: String): List<String> {
     }
     // Return the result list after processing all the lines
     return result
-}
+}*/
 
