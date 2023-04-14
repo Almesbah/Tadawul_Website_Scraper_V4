@@ -24,7 +24,7 @@ fun main() {
         for (i in 0 until  companySymbolList.size){
            val companyDataList =  Selenium.getCompanyData(driver,companySymbolList[i])
 
-            DataCalculations.companyData(companyDataList)
+            DataCalculations.companyDataCalculations(companyDataList)
         }
 
     } catch (e: Exception) {
