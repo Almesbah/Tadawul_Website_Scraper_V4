@@ -1,6 +1,9 @@
+val kotlinVersion: String by project
+val seleniumVersion: String by project
+
 // Apply the Kotlin JVM plugin and specify its version
 plugins {
-    kotlin("jvm") version "1.5.31" // or the version you are using
+    kotlin("jvm") version "1.8.20" // or the version you are using
     // Other plugins if needed
 }
 
@@ -19,7 +22,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     // Include Selenium dependency for web scraping
-    implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
+    implementation("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
+
+    //Include FreeMarker for HTML Template
+    implementation("org.freemarker:freemarker:2.3.32")
 
     // Include Apache POI dependency for working with Microsoft Office files
     implementation("org.apache.poi:poi:5.1.0")
@@ -33,6 +39,9 @@ dependencies {
     // Include JUnit 5 dependencies for testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+
+    //Include Mustache HTML Templates library
+    implementation("com.github.spullara.mustache.java:compiler:0.9.10")
 }
 
 // Configure the test task to use JUnit Platform (JUnit 5)

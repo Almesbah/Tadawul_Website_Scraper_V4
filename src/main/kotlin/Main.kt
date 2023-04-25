@@ -1,3 +1,4 @@
+import Constants.WEB_DRIVER_PATH
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
@@ -6,7 +7,7 @@ import org.openqa.selenium.firefox.FirefoxOptions
 
 fun main() {
     // Set the system property for the GeckoDriver (Firefox WebDriver)
-    System.setProperty("webdriver.gecko.driver", "./geckodriver")
+    System.setProperty("webdriver.gecko.driver", WEB_DRIVER_PATH)
     // Configure Firefox options for headless mode
     val firefoxOptions = FirefoxOptions().apply {
         addArguments("--headless")

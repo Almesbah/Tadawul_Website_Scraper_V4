@@ -1,7 +1,7 @@
 import org.openqa.selenium.*
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 // The Selenium object contains methods for extracting web data using Selenium.
 object Selenium {
@@ -41,7 +41,7 @@ object Selenium {
         val cashFlowTable = getFinancialStatement(driver, "#cashflow", "3")
         companyDataList.add(cashFlowTable.text)
 
-        println("$companySymbolList Finished Successfully")
+        println("extracting $companySymbolList Data Finished Successfully")
 
         // Scroll to the top of the page to make the header and ticker bar visible
         (driver as JavascriptExecutor).executeScript("window.scrollTo(0, 0);")
@@ -49,9 +49,25 @@ object Selenium {
         return companyDataList
     }
 }
+
+fun performSearch(driver: WebDriver, searchTerm: String) {
+    val searchIcon: WebElement = driver.findElement(By.cssSelector(".searchtxt"))
+    WebDriverWait(driver, Duration.ofSeconds(30)).until(ExpectedConditions.elementToBeClickable(searchIcon))
+    searchIcon.click()
+
+    val searchBox = driver.findElement(By.cssSelector("#searchQuery"))
+    searchBox.sendKeys(searchTerm, Keys.ENTER)
+
+    println("Search term '$searchTerm' entered and search performed Successfully.")
+
+    // Set implicit wait time
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20))
+}
+
+    /* 'implicitlyWait(Long, TimeUnit!): WebDriver.Timeouts!' is deprecated. Deprecated in Java?
     fun performSearch(driver: WebDriver, searchTerm: String) {
         val searchIcon: WebElement = driver.findElement(By.cssSelector(".searchtxt"))
-        WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(searchIcon))
+        WebDriverWait(driver, Duration.ofSeconds(30)).until(ExpectedConditions.elementToBeClickable(searchIcon))
         searchIcon.click()
 
         val searchBox = driver.findElement(By.cssSelector("#searchQuery"))
@@ -61,16 +77,16 @@ object Selenium {
 
         // Set implicit wait time
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS)
-    }
+    }*/
 
 fun getFinancialStatement(driver: WebDriver, tableName: String, tableNumber: String): WebElement {
     if (tableName == "#balancesheet") {
         // Wait for the page to load
-        WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".pageLoader"))))
+        WebDriverWait(driver, Duration.ofSeconds(30)).until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".pageLoader"))))
     } else {
         //Click on the list tab
         val listTab: WebElement = driver.findElement(By.cssSelector(tableName))
-        WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(listTab))
+        WebDriverWait(driver, Duration.ofSeconds(30)).until(ExpectedConditions.elementToBeClickable(listTab))
         listTab.click()
     }
 
@@ -78,13 +94,13 @@ fun getFinancialStatement(driver: WebDriver, tableName: String, tableNumber: Str
     val quarterlyTab: WebElement =
         driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child($tableNumber) > div:nth-child(1) > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2)"))
 
-    WebDriverWait(driver, 20).until(ExpectedConditions.elementToBeClickable(quarterlyTab))
+    WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions.elementToBeClickable(quarterlyTab))
 
     quarterlyTab.click()
 
     // Wait for the table data to load
     val tableLocator = By.cssSelector("div.inner_tab_DtlBox:nth-child($tableNumber) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > table:nth-child(1)")
-    WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfNestedElementsLocatedBy(tableLocator, By.tagName("td")))
+    WebDriverWait(driver, Duration.ofSeconds(30)).until(ExpectedConditions.presenceOfNestedElementsLocatedBy(tableLocator, By.tagName("td")))
 
     // Return the Cash Flow table Web Element
     return driver.findElement(tableLocator)
