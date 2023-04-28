@@ -1,19 +1,32 @@
-val kotlinVersion: String by project
-val seleniumVersion: String by project
+val kotlin_version: String by project
+val ktor_version: String by project
+val selenium_version: String by project
+val logback_version: String by project
 
 // Apply the Kotlin JVM plugin and specify its version
 plugins {
-    kotlin("jvm") version "1.8.20" // or the version you are using
-    // Other plugins if needed
+    kotlin("jvm") version "1.8.21" // or the version you are using
+
+    id("io.ktor.plugin") version "2.3.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 
 // Set the group ID and version number for your project
 group = "com.example"
 version = "1.0-SNAPSHOT"
 
+//This code block is used for projects that are standalone applications. It sets up the main class and some JVM arguments for the application.
+application {
+    mainClass.set("com.example.ApplicationKt")
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
 // Define repositories where dependencies will be fetched from
 repositories {
     mavenCentral() // Use Maven Central repository to resolve dependencies
+    maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers") }
 }
 
 // Define the project dependencies
@@ -21,8 +34,23 @@ dependencies {
     // Include Kotlin standard library
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
+    //Include Ktor
+    implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-server-freemarker-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-html-builder-jvm:$ktor_version")
+    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.129-kotlin-1.4.20")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
+    implementation("io.ktor:ktor-serialization-gson-jvm:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-default-headers-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
+
     // Include Selenium dependency for web scraping
-    implementation("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
+    implementation("org.seleniumhq.selenium:selenium-java:$selenium_version")
 
     //Include FreeMarker for HTML Template
     implementation("org.freemarker:freemarker:2.3.32")
