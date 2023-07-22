@@ -8,6 +8,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.http.content.*
 
 
 fun main() {
@@ -20,8 +21,9 @@ fun main() {
             templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
         }
 
-            // Configure routing
+        // Configure routing
             routing {
+
                 // Define a GET route for the root path "/"
                 get("/") {
                     call.respond(FreeMarkerContent("results.ftl", mapOf<String, Any>("results" to listOf<CompanyResults>())))
@@ -44,6 +46,9 @@ fun main() {
                         call.respond(InternalServerError, "Error calculating fundamental analysis results.")
                     }
                 }
+
+                // Serve static resources from "/icons" resource folder
+                staticResources("/icons", "icons")
             }
         }.start(wait = true) // Start the server and wait for incoming requests
     }
