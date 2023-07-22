@@ -48,6 +48,8 @@ dependencies {
     implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
+    // Include Logback for logging
+    implementation("ch.qos.logback:logback-classic:$logback_version")
 
     // Include Selenium dependency for web scraping
     implementation("org.seleniumhq.selenium:selenium-java:$selenium_version")

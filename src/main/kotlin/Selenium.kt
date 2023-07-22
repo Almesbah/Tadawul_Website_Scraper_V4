@@ -1,3 +1,5 @@
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.openqa.selenium.*
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -6,7 +8,7 @@ import java.time.Duration
 // The Selenium object contains methods for extracting web data using Selenium.
 object Selenium {
 
-    fun getCompanyData(driver: WebDriver, companySymbolList: String): ArrayList<String> {
+  suspend  fun getCompanyData(driver: WebDriver, companySymbolList: String): CompanyObject = withContext(Dispatchers.IO) {
         // Wait for a while for the header ticker bar to be visible
         Thread.sleep(1000)
         // Perform search
@@ -14,39 +16,50 @@ object Selenium {
         // Wait for a while before closing the browser (to see the result)
         Thread.sleep(1000)
 
-        val companyDataList = arrayListOf<String>()
+        //val companyDataList = arrayListOf<String>()
 
-        val stockPrice =
-            driver.findElement(By.cssSelector("div.main_trade_box:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)")).text
+
+        val stockPrice = driver.findElement(By.cssSelector("div.main_trade_box:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)")).text
         val companyName = driver.findElement(By.cssSelector(".saudiPage > h3:nth-child(1)")).text
-        val companyIssuedShares =
-            driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(2) > strong:nth-child(2)")).text
-        val paidCapital =
-            driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(3) > strong:nth-child(2)")).text
+        val companyIssuedShares = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(2) > strong:nth-child(2)")).text
+        val paidCapital = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(3) > strong:nth-child(2)")).text
 
-        companyDataList.add(stockPrice)
+        /*companyDataList.add(stockPrice)
         companyDataList.add(companyName)
         companyDataList.add(companyIssuedShares)
-        companyDataList.add(paidCapital)
+        companyDataList.add(paidCapital)*/
 
         // The Quarterly Balance Sheet WebElement (Still need to be converted to list)
         val balanceSheetTable = getFinancialStatement(driver, "#balancesheet", "1")
-        companyDataList.add(balanceSheetTable.text)
+        //companyDataList.add(balanceSheetTable.text)
+        val bSString = balanceSheetTable.text
 
         // The Quarterly Statement of Income
         val statementOfIncomeTable = getFinancialStatement(driver, "#statementofincome", "2")
-        companyDataList.add(statementOfIncomeTable.text)
+        //companyDataList.add(statementOfIncomeTable.text)
+        val sOIString = statementOfIncomeTable.text
 
         // The Quarterly Cash Flow
         val cashFlowTable = getFinancialStatement(driver, "#cashflow", "3")
-        companyDataList.add(cashFlowTable.text)
+        //companyDataList.add(cashFlowTable.text)
+        val cFString = cashFlowTable.text
 
         println("extracting $companySymbolList Data Finished Successfully")
 
         // Scroll to the top of the page to make the header and ticker bar visible
         (driver as JavascriptExecutor).executeScript("window.scrollTo(0, 0);")
 
-        return companyDataList
+        val companyData = CompanyObject(
+            stockPrice = stockPrice,
+            companyName = companyName,
+            companyIssuedShares = companyIssuedShares,
+            paidCapital = paidCapital,
+            bSheetList = bSString, // You might want to convert this to a list or another appropriate data structure
+            sOIList = sOIString, // You might want to convert this to a list or another appropriate data structure
+            cFList = cFString // You might want to convert this to a list or another appropriate data structure
+        )
+
+      return@withContext companyData
     }
 }
 

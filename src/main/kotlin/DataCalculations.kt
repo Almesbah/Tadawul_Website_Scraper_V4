@@ -1,28 +1,27 @@
 
 object DataCalculations {
 
-    fun companyDataCalculations(dataList:ArrayList<String>) {
+    fun companyDataCalculations(companyData: CompanyObject): CompanyIndexes {
 
-        val stockPrice = dataList[0].toDouble()
-        val companyName = dataList[1]
-        val companyIssuedShares = dataList[2].replace(",", "").toDouble()
-        val paidCapital = dataList[3].replace(",", "").toDouble()
+        val stockPrice = companyData.stockPrice.toDouble() //dataList[0].toDouble()
+        val companyName = companyData.companyName //dataList[1]
+        val companyIssuedShares = companyData.companyIssuedShares.replace(",", "").toDouble() //dataList[2].replace(",", "").toDouble()
+        val paidCapital = companyData.paidCapital.replace(",", "").toDouble() //dataList[3].replace(",", "").toDouble()
 
         println(companyName)
         println(stockPrice)
         println(companyIssuedShares)
         println(paidCapital)
 
-        val balanceSheetTable = dataList[4]
-        val statementOfIncomeTable = dataList[5]
-        val cashFlowTable = dataList[6]
+        val balanceSheetTable = companyData.bSheetList //dataList[4]
+        val statementOfIncomeTable = companyData.sOIList //dataList[5]
+        val cashFlowTable = companyData.cFList //dataList[6]
 
 
         //Split String to String List
         val extractedBSTable = splitTableDataString(balanceSheetTable)
         //Convert StringList to Double value
         val bSLDouble = stringNumberListToDouble(extractedBSTable)
-        println(bSLDouble)
 
         val extractedSOITable = splitTableDataString(statementOfIncomeTable)
         val sOIDouble = stringNumberListToDouble(extractedSOITable)
@@ -30,79 +29,80 @@ object DataCalculations {
         val extractedCFTable = splitTableDataString(cashFlowTable)
         val cFDouble = stringNumberListToDouble(extractedCFTable)
 
-        val companyDataList = arrayListOf(stockPrice, companyName, companyIssuedShares, paidCapital, bSLDouble, sOIDouble, cFDouble)
-
-        val companyFundamentalAnalysisIndexes = arrayListOf<Double>()
+        //val companyDataList = arrayListOf(stockPrice, companyName, companyIssuedShares, paidCapital, bSLDouble, sOIDouble, cFDouble)
 
         // val calc1 = (stockPrice*issuedShares)/incomeStatement[11] Net Income
-        val PE = stockPrice/(companyIssuedShares/sOIDouble[57] as Double)
-        companyFundamentalAnalysisIndexes.add(PE)
+        val PE = stockPrice / (companyIssuedShares / sOIDouble[57] as Double)
         println(PE)
 
         //val calc2 = balanceSheet[9]/issuedShares
-        val BVPS = bSLDouble[47] as Double/companyIssuedShares
-        companyFundamentalAnalysisIndexes.add(BVPS)
+        val BVPS = bSLDouble[47] as Double / companyIssuedShares
         println(BVPS)
 
         //val calc3 = stockPrice/calc2
-        val priceToBVPS = stockPrice/BVPS
-        companyFundamentalAnalysisIndexes.add(priceToBVPS)
+        val priceToBVPS = stockPrice / BVPS
         println(priceToBVPS)
 
         //val calc4 = incomeStatement[11]/incomeStatement[4]
-        val netProfitMargin = sOIDouble[57] as Double/sOIDouble[22] as Double
-        companyFundamentalAnalysisIndexes.add(netProfitMargin)
+        val netProfitMargin = sOIDouble[57] as Double / sOIDouble[22] as Double
         println(netProfitMargin)
 
         // val calc5 = incomeStatement[2]/incomeStatement[0]
-        val grossProfitMargin = sOIDouble[12] as Double/sOIDouble[2] as Double
-        companyFundamentalAnalysisIndexes.add(grossProfitMargin)
+        val grossProfitMargin = sOIDouble[12] as Double / sOIDouble[2] as Double
         println(grossProfitMargin)
 
         //val calc6 = incomeStatement[11]/balanceSheet[9]
-        val ROE = sOIDouble[57] as Double/bSLDouble[47] as Double
-        companyFundamentalAnalysisIndexes.add(ROE)
+        val ROE = sOIDouble[57] as Double / bSLDouble[47] as Double
         println(ROE)
 
         //val calc7 = incomeStatement[11]/balanceSheet[5]
-        val ROA = sOIDouble[57] as Double/bSLDouble[27] as Double
-        companyFundamentalAnalysisIndexes.add(ROA)
+        val ROA = sOIDouble[57] as Double / bSLDouble[27] as Double
         println(ROA)
 
         //val calc8 = incomeStatement[11]/paidCapital
-        val ROC = sOIDouble[57] as Double/paidCapital
-        companyFundamentalAnalysisIndexes.add(ROC)
+        val ROC = sOIDouble[57] as Double / paidCapital
         println(ROC)
 
         //val calc9 = incomeStatement[11]/issuedShares
-        val EPS = sOIDouble[57] as Double/companyIssuedShares
-        companyFundamentalAnalysisIndexes.add(EPS)
+        val EPS = sOIDouble[57] as Double / companyIssuedShares
         println(EPS)
 
         //val calc10 = balanceSheet[5]/balanceSheet[9]
-        val financialLeverage = bSLDouble[52] as Double/bSLDouble[47] as Double
-        companyFundamentalAnalysisIndexes.add(financialLeverage)
+        val financialLeverage = bSLDouble[52] as Double / bSLDouble[47] as Double
         println(financialLeverage)
 
         //val calc11 = (balanceSheet[10] - balanceSheet[9])/balanceSheet[5]
-        val debtRatio = (bSLDouble[52] as Double-bSLDouble[47] as Double)/bSLDouble[27] as Double
-        companyFundamentalAnalysisIndexes.add(debtRatio)
+        val debtRatio = (bSLDouble[52] as Double - bSLDouble[47] as Double) / bSLDouble[27] as Double
         println(debtRatio)
 
         //val calc12 = (balanceSheet[10] - balanceSheet[9])/balanceSheet[9]
-        val dToERatio = (bSLDouble[52] as Double-bSLDouble[47] as Double)/bSLDouble[47] as Double
-        companyFundamentalAnalysisIndexes.add(dToERatio)
+        val dToERatio = (bSLDouble[52] as Double - bSLDouble[47] as Double) / bSLDouble[47] as Double
         println(dToERatio)
 
         //val calc13 = (cashFlow[11]+cashFlow[2])/balanceSheet[6]
-        val quickLiquidityRatio = (cFDouble[57] as Double + cFDouble[12] as Double )/bSLDouble[32] as Double
-        companyFundamentalAnalysisIndexes.add(quickLiquidityRatio)
+        val quickLiquidityRatio = (cFDouble[57] as Double + cFDouble[12] as Double) / bSLDouble[32] as Double
         println(quickLiquidityRatio)
 
         //val calc14 = balanceSheet[6]/balanceSheet[0]
-        val liquidityRatio = bSLDouble[32] as Double/bSLDouble[2] as Double
-        companyFundamentalAnalysisIndexes.add(liquidityRatio)
+        val liquidityRatio = bSLDouble[32] as Double / bSLDouble[2] as Double
         println(liquidityRatio)
+
+        return CompanyIndexes(
+            PE = PE,
+            BVPS = BVPS,
+            priceToBVPS = priceToBVPS,
+            netProfitMargin = netProfitMargin,
+            grossProfitMargin = grossProfitMargin,
+            ROE = ROE,
+            ROA = ROA,
+            ROC = ROC,
+            EPS = EPS,
+            financialLeverage = financialLeverage,
+            debtRatio = debtRatio,
+            dToERatio = dToERatio,
+            quickLiquidityRatio = quickLiquidityRatio,
+            liquidityRatio = liquidityRatio
+        )
     }
 }
 
@@ -143,49 +143,4 @@ fun stringNumberListToDouble(input: List<String>): List<Any> {
         }
     }
 }
-
-// Function that takes an input string split it and returns a list of strings
-/*fun extractTableData(input: String): List<String> {
-    // Split the input string into lines using the newline character
-    val lines = input.split("\n")
-    // Create a mutable list to store the final output strings
-    val result = mutableListOf<String>()
-
-    // Iterate through each line in the lines list
-    for (line in lines) {
-        // Check if the line contains a hyphen surrounded by whitespace or a hyphen at the end of the line
-        if (line.contains(Regex("\\s-\\s|\\s-\$"))) {
-            // Split the line into words and hyphen groups using lookahead regex and trim the substrings
-            val wordsAndHyphens = line.split(Regex("(?=\\s-\\s|\\s-\$)")).map { it.trim() }
-
-            // Iterate through each word or hyphen group in the wordsAndHyphens list
-            for (word in wordsAndHyphens) {
-                // Check if the word or hyphen group contains a hyphen surrounded by whitespace or a hyphen at the end of the line
-                if (word.contains(Regex("\\s-\\s|\\s-\$"))) {
-                    // Split the word or hyphen group into individual elements using whitespace as a delimiter
-                    val splitWord = word.split(Regex("\\s"))
-
-                    // Combine the first two elements of the splitWord list (i.e., the text before the hyphen and the hyphen) and add the resulting string to the result list
-                    result.add(splitWord[0] + " " + splitWord[1])
-
-                    // Iterate through the remaining elements of the splitWord list, starting from the third element
-                    for (i in 2 until splitWord.size) {
-                        // Check if the current element is a hyphen, if it is, add the hyphen to the result list
-                        if (splitWord[i] == "-") {
-                            result.add(splitWord[i])
-                        }
-                    }
-                } else {
-                    // Add the word or hyphen group to the result list as-is
-                    result.add(word)
-                }
-            }
-        } else {
-            // Add the line to the result list as-is
-            result.add(line)
-        }
-    }
-    // Return the result list after processing all the lines
-    return result
-}*/
 
