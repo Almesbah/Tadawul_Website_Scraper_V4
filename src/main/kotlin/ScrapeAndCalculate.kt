@@ -13,7 +13,7 @@ object ScrapeAndCalculate {
         System.setProperty("webdriver.gecko.driver", WEB_DRIVER_PATH)
         // Configure Firefox options for headless mode
         val firefoxOptions = FirefoxOptions().apply {
-            addArguments("--headless")
+            //addArguments("--headless")
         }
         // Create an instance of FirefoxDriver with the specified options
         val driver: WebDriver = FirefoxDriver(firefoxOptions)

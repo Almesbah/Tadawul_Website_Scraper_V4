@@ -2,13 +2,14 @@ val kotlin_version: String by project
 val ktor_version: String by project
 val selenium_version: String by project
 val logback_version: String by project
+val freemarker_version: String by project
 
 // Apply the Kotlin JVM plugin and specify its version
 plugins {
-    kotlin("jvm") version "1.8.21" // or the version you are using
+    kotlin("jvm") version "1.9.22" // or the version you are using
 
     id("io.ktor.plugin") version "2.3.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
 }
 
 // Set the group ID and version number for your project
@@ -55,13 +56,13 @@ dependencies {
     implementation("org.seleniumhq.selenium:selenium-java:$selenium_version")
 
     //Include FreeMarker for HTML Template
-    implementation("org.freemarker:freemarker:2.3.32")
+    //implementation("org.freemarker:freemarker:$freemarker_version")
 
     // Include Apache POI dependency for working with Microsoft Office files
-    implementation("org.apache.poi:poi:5.1.0")
+    //implementation("org.apache.poi:poi:5.1.0")
 
     // Include Apache POI OOXML dependency for working with Excel files
-    implementation("org.apache.poi:poi-ooxml:5.1.0")
+    //implementation("org.apache.poi:poi-ooxml:5.1.0")
 
     // Include Kotlin test dependencies for testing
     testImplementation(kotlin("test"))

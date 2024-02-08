@@ -23,7 +23,7 @@ object Selenium {
         val companyName = driver.findElement(By.cssSelector(".saudiPage > h3:nth-child(1)")).text
         val companyIssuedShares = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(2) > strong:nth-child(2)")).text
         val paidCapital = driver.findElement(By.cssSelector(".inspectionBox > ul:nth-child(1) > li:nth-child(3) > strong:nth-child(2)")).text
-
+      println("Stock price = $stockPrice sucsessfully done?!")
         /*companyDataList.add(stockPrice)
         companyDataList.add(companyName)
         companyDataList.add(companyIssuedShares)
@@ -106,7 +106,7 @@ fun getFinancialStatement(driver: WebDriver, tableName: String, tableNumber: Str
     // Click on the Quarterly tab
     val quarterlyTab: WebElement =
         driver.findElement(By.cssSelector("div.inner_tab_DtlBox:nth-child($tableNumber) > div:nth-child(1) > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2)"))
-
+    //#anualQuater > ul:nth-child(1) > li:nth-child(2)
     WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions.elementToBeClickable(quarterlyTab))
 
     quarterlyTab.click()

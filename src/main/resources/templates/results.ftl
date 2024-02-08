@@ -28,11 +28,11 @@
         }
 
         .green-cell {
-            background-color: green;
+            background-color: #68C16F;
         }
 
         .red-cell {
-            background-color: red;
+            background-color: #C94D4D;
         }
 
     </style>
@@ -236,7 +236,6 @@
             // Hide the loading spinner
             document.getElementById('loading-spinner').style.display = 'none';
         };
-
     </script>
 </body>
 </html>
